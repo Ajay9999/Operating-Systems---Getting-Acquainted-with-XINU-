@@ -1,0 +1,65 @@
+1) Assuming the XINU text begins at address 0x0, draw a rough diagram of XINU's memory layout with addresses derived from your experimental measurements.
+   Include the information you uncovered from running your version of printsegaddress() and printprocstks().
+
+
+
+                                                                 |  FREE  |   
+                                                                 |        |
+                                                                 |________|   base pointer (stack base address)= 0x00ffeff8
+                                                                 |        |
+                                                                 |	  |  
+                                                                 |        |   stack pointer currently executing  = 0x00ffefa0
+                                                                 | Stack  |
+                                                                 |	  |   stack size = 0x00001000 (4096)
+                                                                 |	  |    
+                                                                 |________|__ stack limit address = 0x00ffdffc
+                                                                 |	  |
+                                                                 |  Heap  |
+                                                                 |	  |
+                                                                 |________|__ ebss = 0x000677b8
+                                                                 |	  |
+                                                                 |  End	  |
+                                                                 | (bss)  |
+                                                                 |________|__ edata = 0x0001e770
+                                                                 | Data   |
+                                                                 | Segment|
+                                                                 |(edata) |
+                                                                 |________|__ etext = 0x00019587
+                                                                 | Text   |
+                                                                 |segment |
+                                                                 |(etext) |
+                                                                 |________|___Start = 0x0
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+2)What is the difference in stack top address before and after calling printtos()? 
+  Draw a diagram to illustrate what are the contents of the items pushed into the stack between these two time points.
+
+ -> The address of top of stack before function call : 0x00ffeff4
+
+ -> The address of top of stack after function call : 0x00ffefec
+
+                                                              |----------| 0x00ffefec
+                                                              |          |  
+                                                              |    EBP   |
+                                                              |----------| 
+                                                              | Return   |
+                                                              | Address  | 
+                                                              |----------| 0x00ffeff4
+
+ This is because before function call top of stack points to a address, after function call
+ -> Arguments if present any are passed onto stack
+ -> Then return address of calling program is passed
+ -> Then the program execution starts and EBP and local variables are passed onto stack.
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+3)In a stack frame, local variables are stored below the top of the stack. In task 3, does your result 
+show all the local variables declared in your printtos function? 
+If not, can you explain that? (hint: try to disable the compiler optimization by specifing -O0 in your Makefile)
+
+ -> No local variables which are used in printtos() function do not show up since compiler optimization is enabled. 
+    Local variables declared are not shown because compiler optimization moves them into the various registers.
+ -> Links used for reference:
+    https://gcc.gnu.org/onlinedocs/gcc/Optimize-Options.html
+
+
